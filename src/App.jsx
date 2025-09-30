@@ -1,6 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, ArrowRight, X, Sparkles } from 'lucide-react'
+import { Menu, ArrowRight, X, Sparkles, Home, User, Code, Briefcase, Mail } from 'lucide-react'
 
 // Lazy load components
 const About = lazy(() => import('./components/About'))
@@ -56,69 +56,81 @@ const App = () => {
 
   return (
     <div className="min-h-screen text-white">
-      {/* Enhanced Fixed Navigation */}
+      {/* Enhanced Attractive Navigation */}
       <motion.nav
-        className={`nav-fixed transition-all duration-300 ${scrolled ? 'py-4' : 'py-6'}`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6 }}
+        className={`nav-fixed ${scrolled ? 'nav-scrolled' : ''}`}
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="container-custom">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
+          <div className={`flex items-center justify-between transition-all duration-300 ${scrolled ? 'h-16' : 'h-20'}`}>
+            {/* Enhanced Logo */}
             <motion.div
-              className="flex items-center space-x-3 cursor-pointer"
+              className="nav-logo flex items-center space-x-3 cursor-pointer"
               onClick={() => scrollToSection('home')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <div className="w-12 h-12 glass rounded-2xl flex items-center justify-center pulse-glow">
-                <span className="text-white font-bold text-xl j-glow">J</span>
-              </div>
-              <span className="text-2xl font-bold gradient-text">Jaydeep</span>
+              <motion.div
+                className="w-12 h-12 glass rounded-2xl flex items-center justify-center pulse-glow relative overflow-hidden"
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 0.6 }}
+              >
+                <span className="text-white font-bold text-xl j-glow relative z-10">J</span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                />
+              </motion.div>
+              <motion.span
+                className="text-2xl font-bold gradient-text"
+                whileHover={{ scale: 1.05 }}
+              >
+                Jaydeep
+              </motion.span>
             </motion.div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-2">
+            {/* Enhanced Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-1">
               {[
-                { id: 'home', label: 'Home' },
-                { id: 'about', label: 'About' },
-                { id: 'skills', label: 'Skills' },
-                { id: 'projects', label: 'Projects' },
-                { id: 'contact', label: 'Contact' }
-              ].map((item) => (
+                { id: 'home', label: 'Home', icon: Home },
+                { id: 'about', label: 'About', icon: User },
+                { id: 'skills', label: 'Skills', icon: Code },
+                { id: 'projects', label: 'Projects', icon: Briefcase },
+                { id: 'contact', label: 'Contact', icon: Mail }
+              ].map((item, index) => (
                 <motion.button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`px-6 py-3 text-sm font-medium transition-all duration-300 rounded-xl relative ${activeSection === item.id
-                    ? 'text-white glass'
-                    : 'text-gray-400 hover:text-white hover:glass'
-                    }`}
+                  className={`nav-item flex items-center space-x-2 ${activeSection === item.id ? 'active' : ''}`}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {item.label}
-                  {activeSection === item.id && (
-                    <motion.div
-                      className="absolute bottom-0 left-1/2 w-1 h-1 bg-white rounded-full"
-                      layoutId="activeIndicator"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      style={{ x: '-50%' }}
-                    />
-                  )}
+                  <item.icon size={16} className="opacity-70" />
+                  <span className="text-sm font-medium">{item.label}</span>
                 </motion.button>
               ))}
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Enhanced Mobile Menu Button */}
             <motion.button
-              className="lg:hidden p-3 glass rounded-xl"
+              className="mobile-menu-btn lg:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              animate={isMobileMenuOpen ? { rotate: 90 } : { rotate: 0 }}
             >
-              <Menu size={20} />
+              <motion.div
+                animate={isMobileMenuOpen ? { rotate: 45 } : { rotate: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </motion.div>
             </motion.button>
           </div>
         </div>
@@ -232,19 +244,33 @@ const App = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            className="fixed inset-0 glass z-50 lg:hidden"
+            className="mobile-menu-overlay lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.4 }}
           >
-            <div className="flex flex-col items-center justify-center h-full space-y-8">
+            <div className="mobile-menu-content">
+              {/* Mobile Menu Header */}
+              <motion.div
+                className="absolute top-8 left-8 flex items-center space-x-3"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="w-10 h-10 glass rounded-xl flex items-center justify-center">
+                  <span className="text-white font-bold j-glow">J</span>
+                </div>
+                <span className="text-xl font-bold gradient-text">Jaydeep</span>
+              </motion.div>
+
+              {/* Mobile Menu Items */}
               {[
-                { id: 'home', label: 'Home' },
-                { id: 'about', label: 'About' },
-                { id: 'skills', label: 'Skills' },
-                { id: 'projects', label: 'Projects' },
-                { id: 'contact', label: 'Contact' }
+                { id: 'home', label: 'Home', icon: Home },
+                { id: 'about', label: 'About', icon: User },
+                { id: 'skills', label: 'Skills', icon: Code },
+                { id: 'projects', label: 'Projects', icon: Briefcase },
+                { id: 'contact', label: 'Contact', icon: Mail }
               ].map((item, index) => (
                 <motion.button
                   key={item.id}
@@ -252,24 +278,47 @@ const App = () => {
                     scrollToSection(item.id)
                     setIsMobileMenuOpen(false)
                   }}
-                  className="text-3xl font-light hover:text-gray-300 transition-colors glass px-8 py-4 rounded-2xl"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  className="mobile-menu-item flex items-center justify-center space-x-3"
+                  initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 50, scale: 0.8 }}
+                  transition={{
+                    delay: index * 0.1 + 0.3,
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 15
+                  }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  {item.label}
+                  <item.icon size={24} className="opacity-70" />
+                  <span className="text-2xl font-light">{item.label}</span>
                 </motion.button>
               ))}
+
+              {/* Close Button */}
               <motion.button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="absolute top-8 right-8 p-3 glass rounded-2xl"
-                whileHover={{ scale: 1.1, rotate: 90 }}
+                className="mobile-menu-close"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0 }}
+                transition={{ delay: 0.1 }}
+                whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
                 <X size={24} />
               </motion.button>
+
+              {/* Background Decoration */}
+              <motion.div
+                className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-gray-600 text-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+              >
+                Navigate to any section
+              </motion.div>
             </div>
           </motion.div>
         )}
